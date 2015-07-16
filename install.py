@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import os
-import Modules.TermOut.Logging
+import Modules.TermOut.Logging as Logging
 
 Logging.header("This is going to take a while and needs a stable internet connection. Continue? [ENTER]")
 raw_input()
