@@ -1,5 +1,5 @@
 # GPIB-USBTMC-Connector
-**Recommended OS: Debian 8 (Raspberry Pi 2 B also supported (kinda))**
+**Recommended OS: Debian 7 (Raspberry Pi 2 B also supported)**
 
 ## Installation
 Install git
