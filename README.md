@@ -6,6 +6,10 @@ Install git
 ```
 sudo apt-get install git
 ```
+Install sudo
+```
+sudo apt-get install sudo
+```
 Clone this repository
 ```
 git clone https://github.com/PhilipTrauner/GPIB-USBTMC-Connector.git
