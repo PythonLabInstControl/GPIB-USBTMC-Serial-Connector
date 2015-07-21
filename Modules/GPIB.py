@@ -76,7 +76,8 @@ class GPIB:
 
 	def reset_usb_controller(self):
 		if self.debug: Logging.warning("Resetting usb controller")
-		if open("/etc/issue").read() == 'Debian GNU/Linux 8 \\n \\l\n\n':
+		os = open("/etc/issue").read()
+		if os == 'Debian GNU/Linux 8 \\n \\l\n\n' or os == 'Debian GNU/Linux  \\n \\l\n\n':
 			self.reset_debian()
 
 
