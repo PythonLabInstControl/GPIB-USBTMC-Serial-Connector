@@ -2,6 +2,8 @@
 
 import GenericDriver
 
+DEVICES = ["SR830"]
+
 class SR830(GenericDriver.GenericDriver):
     def correct_phaseshift(self, phase):
         """
