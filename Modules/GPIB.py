@@ -15,7 +15,7 @@ class GPIB:
 	def __init__(self, sad=0, timeout=13, send_eoi=1, eos_mode=0, debug=False):
 		self.debug = debug
 		self.devices = {}
-		self.drivers = {"Stanford_Research_Systems,SR830,s/n55714,ver1.07" : SR830.SR830}
+		self.drivers = {"SR830" : SR830.SR830}
 		self.started = True
 		self.reset_usb_controller()
 		# Interface ids are used to determine which usb connections need to be reset
@@ -35,12 +35,15 @@ class GPIB:
 		for pad in range(0, 31):
 			id = gpib.dev(0, pad, sad, timeout, send_eoi, eos_mode)
 			try:
+				driver_avaliable = False
 				gpib.clear(id)
 				gpib.write(id, "*IDN?")
 				device_id = gpib.read(id, 1024).rstrip()
-				if device_id in self.drivers:
-					self.devices[pad] = self.drivers[device_id](GPIBCommunicator(id, self.reset_interfaces))
-				else:
+				for i in self.drivers:
+					if i in device_id:
+						self.devices[pad] = self.drivers[i](GPIBCommunicator(id, self.reset_interfaces))
+						driver_avaliable = True
+				if not driver_avaliable:
 					self.devices[pad] = GenericDriver.GenericDriver(GPIBCommunicator(id, self.reset_interfaces))
 				discovered[id] = device_id
 			except gpib.GpibError:
@@ -49,6 +52,7 @@ class GPIB:
 		for i in discovered:
 			Logging.header("%s on %s" % (discovered[i], i - 16))
 		Logging.success("Discovery finished successfully!")
+
 
 
 	def __del__(self):
