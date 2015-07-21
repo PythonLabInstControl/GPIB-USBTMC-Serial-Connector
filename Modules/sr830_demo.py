@@ -1,6 +1,6 @@
 from GPIB import GPIB
 
-g = GPIB()
+g = GPIB(debug=True)
 print("Devices: " + str(g.devices))
 if len(g.devices) > 0:
 	port = int(raw_input("Port: "))
