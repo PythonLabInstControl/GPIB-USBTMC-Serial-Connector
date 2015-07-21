@@ -77,17 +77,25 @@ class GPIB:
 	def reset_usb_controller(self):
 		if self.debug: Logging.warning("Resetting usb controller")
 		os = open("/etc/issue").read()
-		if os == 'Debian GNU/Linux 8 \\n \\l\n\n' or os == 'Debian GNU/Linux  \\n \\l\n\n':
-			self.reset_debian()
+		if os == 'Debian GNU/Linux 8 \\n \\l\n\n':
+			self.reset_debian8()
+		elif os == 'Debian GNU/Linux 7 \\n \\l\n\n':
+			self.reset_debian7()
 
 
-	def reset_debian(self):
+	def reset_debian8(self):
 		ehci_content = os.listdir("/sys/bus/pci/drivers/ehci-pci/")
 		for i in ehci_content:
 			if i[0] == "0":
 				os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci-pci/unbind' % i)
 				os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci-pci/bind' % i)
 
+        def reset_debian7(self):
+                ehci_content = os.listdir("/sys/bus/pci/drivers/ehci-hcd/")
+                for i in ehci_content:
+                        if i[0] == "0":
+                                os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci-hcd/unbind' % i)
+                                os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci-hcd/bind' % i)
 
 	def reset_usb(self):
 		if self.debug: Logging.info("Resetting connected usb interfaces")
