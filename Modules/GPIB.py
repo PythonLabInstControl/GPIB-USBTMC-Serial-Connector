@@ -22,10 +22,10 @@ class GPIB:
         		if i[0] != "_" and i != "GenericGPIBDriver":
                 		driver = getattr(Drivers, i)
                 		if hasattr(driver, "DEVICES"):
-                        		for i in driver.DEVICES:
-                                		if i in self.drivers.keys():
-                                			Logging.warning("%s and %s support the same device." % (self.drivers[i], driver))
-                                		self.drivers[i] = driver
+					for k in driver.DEVICES:
+                                		if k in self.drivers.keys():
+                                			Logging.warning("%s and %s support the same device." % (self.drivers[k], driver))
+                                		self.drivers[k] = getattr(driver, i) 
 				else:
 					Logging.warning("'DEVICES' attribute missing for %s" % driver)
 		if self.debug: Logging.header("Drivers for following devices have been loaded: %s" % self.drivers)
