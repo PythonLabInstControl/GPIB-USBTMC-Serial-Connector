@@ -91,11 +91,11 @@ class GPIB:
 				os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci-pci/bind' % i)
 
         def reset_debian7(self):
-                ehci_content = os.listdir("/sys/bus/pci/drivers/ehci-hcd/")
+                ehci_content = os.listdir("/sys/bus/pci/drivers/ehci_hcd/")
                 for i in ehci_content:
                         if i[0] == "0":
-                                os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci-hcd/unbind' % i)
-                                os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci-hcd/bind' % i)
+                                os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci_hcd/unbind' % i)
+                                os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci_hcd/bind' % i)
 
 	def reset_usb(self):
 		if self.debug: Logging.info("Resetting connected usb interfaces")
