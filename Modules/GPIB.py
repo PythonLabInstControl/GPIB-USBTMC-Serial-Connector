@@ -205,3 +205,21 @@ class GPIBCommunicator:
 
 	def timeout(self, value):
 		return gpib.timeout(self.id, value)
+
+if __name__ == "__main__":
+	g = GPIB()
+	if len(g.devices.keys()) > 0:
+		Logging.header(g.devices.keys())
+		port_corrent = False
+		while not port_corrent:
+			port = raw_input("Port: ")
+			if port.isdigit():
+				port = int(port)
+				if port in g.devices.keys():
+					port_corrent = True
+		Logging.header("Starting command line (^C to quit)")
+		try:
+			while 1:
+				print(g.devices[port].get(raw_input("> ")))
+		except KeyboardInterrupt:
+			pass
