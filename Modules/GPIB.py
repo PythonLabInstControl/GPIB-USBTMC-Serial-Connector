@@ -8,14 +8,14 @@ from TermOut.ProgressBar import ProgressBar
 import os
 import subprocess
 import time
-
+from Drivers import *
 
 
 class GPIB:
 	def __init__(self, sad=0, timeout=13, send_eoi=1, eos_mode=0, debug=False):
 		self.debug = debug
 		self.devices = {}
-		self.drivers = {}
+		self.drivers = {"Stanford_Research_Systems,SR830,s/n55714,ver1.07" : SR830.SR830}
 		self.started = True
 		self.reset_usb_controller()
 		# Interface ids are used to determine which usb connections need to be reset
@@ -38,7 +38,10 @@ class GPIB:
 				gpib.clear(id)
 				gpib.write(id, "*IDN?")
 				device_id = gpib.read(id, 1024).rstrip()
-				self.devices[pad] = GenericDriver(GPIBCommunicator(id, self.reset_interfaces))
+				if device_id in self.drivers:
+					self.devices[pad] = self.drivers[device_id](GPIBCommunicator(id, self.reset_interfaces))
+				else:
+					self.devices[pad] = GenericDriver.GenericDriver(GPIBCommunicator(id, self.reset_interfaces))
 				discovered[id] = device_id
 			except gpib.GpibError:
 				pass
@@ -81,7 +84,7 @@ class GPIB:
 
 
 
-	# If the interface get's stuck this function is used to reset it 
+	# If the interface get's stuck this function is used to reset it
 	def reset_interfaces(self, calls=0):
 		if self.debug: Logging.info("Resetting connected interfaces")
 		self.reset_usb()
@@ -202,34 +205,3 @@ class GPIBCommunicator:
 
 	def timeout(self, value):
 		return gpib.timeout(self.id, value)
-
-
-
-class GenericDriver(GPIBCommunicator):
-	def __init__(self, communicator):
-		self.communicator = communicator
-
-
-	def get(self, cmd):
-		self.communicator.write(cmd)
-		return self.communicator.read(1024)
-
-
-
-if __name__ == "__main__":
-	g = GPIB()
-	if len(g.devices.keys()) > 0:
-		Logging.header(g.devices.keys())
-		port_corrent = False
-		while not port_corrent:
-			port = raw_input("Port: ")
-			if port.isdigit():
-				port = int(port)
-				if port in g.devices.keys():
-					port_corrent = True
-		Logging.header("Starting command line (^C to quit)")
-		try:
-			while 1:
-				print(g.devices[port].get(raw_input("> ")))
-		except KeyboardInterrupt:
-			pass
