@@ -8,14 +8,24 @@ from TermOut.ProgressBar import ProgressBar
 import os
 import subprocess
 import time
-from Drivers import *
+import sys
+import Drivers
 
 
 class GPIB:
 	def __init__(self, sad=0, timeout=13, send_eoi=1, eos_mode=0, debug=False):
 		self.debug = debug
 		self.devices = {}
-		self.drivers = {"SR830" : SR830.SR830}
+		self.drivers = {}
+		for i in dir(Drivers):
+        		if i[0] != "_" and i != "GenericDriver":
+                		driver = getattr(Drivers, i)
+                		if hasattr(driver, "DEVICES"):
+                        		for i in driver.DEVICES:
+                                		self.drivers[i] = driver
+				else:
+					Logging.warning("'DEVICES' attribute missing for %s" % driver)
+		if self.debug: Logging.header("Drivers for following devices have been loaded: %s" % self.drivers)
 		self.started = True
 		self.reset_usb_controller()
 		# Interface ids are used to determine which usb connections need to be reset
@@ -44,7 +54,7 @@ class GPIB:
 						self.devices[pad] = self.drivers[i](GPIBCommunicator(id, self.reset_interfaces))
 						driver_avaliable = True
 				if not driver_avaliable:
-					self.devices[pad] = GenericDriver.GenericDriver(GPIBCommunicator(id, self.reset_interfaces))
+					self.devices[pad] = Drivers.GenericDriver.GenericDriver(GPIBCommunicator(id, self.reset_interfaces))
 				discovered[id] = device_id
 			except gpib.GpibError:
 				pass
