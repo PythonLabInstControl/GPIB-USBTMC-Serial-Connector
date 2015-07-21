@@ -1,5 +1,3 @@
-import GPIB
-
 class GenericDriver:
 	def __init__(self, communicator, debug=False):
 		self.communicator = communicator
