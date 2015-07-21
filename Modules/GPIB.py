@@ -19,7 +19,7 @@ class GPIB:
 		self.drivers = {}
 		# We go through each driver and look at the attribute DEVICES which contains all devices the driver should be loaded for.
 		for i in dir(Drivers):
-        		if i[0] != "_" and i != "GenericDriver":
+        		if i[0] != "_" and i != "GenericGPIBDriver":
                 		driver = getattr(Drivers, i)
                 		if hasattr(driver, "DEVICES"):
                         		for i in driver.DEVICES:
@@ -57,7 +57,7 @@ class GPIB:
 						self.devices[pad] = self.drivers[i](GPIBCommunicator(id, self.reset_interfaces))
 						driver_avaliable = True
 				if not driver_avaliable:
-					self.devices[pad] = Drivers.GenericDriver.GenericDriver(GPIBCommunicator(id, self.reset_interfaces))
+					self.devices[pad] = Drivers.GenericGPIBDriver.GenericGPIBDriver(GPIBCommunicator(id, self.reset_interfaces))
 				discovered[id] = device_id
 			except gpib.GpibError:
 				pass
