@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import GenericDriver
+from GenericGPIBDriver import GenericGPIBDriver
 
 DEVICES = ["SR830"]
 
-class SR830(GenericDriver.GenericDriver):
+class SR830(GenericGPIBDriver):
     def correct_phaseshift(self, phase):
         """
         I have no idea what this method is supposed to do (-> untested)
