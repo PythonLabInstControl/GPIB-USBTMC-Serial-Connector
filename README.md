@@ -2,13 +2,13 @@
 **Recommended OS: Debian 7 (Raspberry Pi 2 B also supported)**
 
 ## Installation
-Install git
-```
-sudo apt-get install git
-```
 Install sudo
 ```
 sudo apt-get install sudo
+```
+Install git
+```
+sudo apt-get install git
 ```
 Clone this repository
 ```
