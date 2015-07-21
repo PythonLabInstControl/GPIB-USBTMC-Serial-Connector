@@ -13,15 +13,18 @@ import Drivers
 
 
 class GPIB:
-	def __init__(self, sad=0, timeout=13, send_eoi=1, eos_mode=0, debug=False):
+	def __init__(self, sad=0, timeout=13, send_eoi=1, eos_mode=0, debug=False, interfaces=[]):
 		self.debug = debug
 		self.devices = {}
 		self.drivers = {}
+		# We go through each driver and look at the attribute DEVICES which contains all devices the driver should be loaded for.
 		for i in dir(Drivers):
         		if i[0] != "_" and i != "GenericDriver":
                 		driver = getattr(Drivers, i)
                 		if hasattr(driver, "DEVICES"):
                         		for i in driver.DEVICES:
+                                		if i in self.drivers.keys():
+                                			Logging.warning("%s and %s support the same device." % (self.drivers[i], i))
                                 		self.drivers[i] = driver
 				else:
 					Logging.warning("'DEVICES' attribute missing for %s" % driver)
@@ -33,7 +36,7 @@ class GPIB:
 		"""
 		Bus 001 Device 006: ID 3923:709b National Instruments Corp. GPIB-USB-HS
 		"""
-		self.interfaces = ["3923:709b", "0957:0518"]
+		self.interfaces = ["3923:709b", "0957:0518"] + interfaces
 		if os.geteuid() != 0:
 			Logging.error("You need to have root privileges to run this script.")
 			self.started = False
@@ -221,7 +224,7 @@ class GPIBCommunicator:
 		return gpib.timeout(self.id, value)
 
 if __name__ == "__main__":
-	g = GPIB()
+	g = GPIB(debug=True)
 	if len(g.devices.keys()) > 0:
 		Logging.header(g.devices.keys())
 		port_corrent = False
