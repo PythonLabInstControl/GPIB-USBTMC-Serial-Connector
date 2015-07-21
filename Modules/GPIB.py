@@ -24,7 +24,7 @@ class GPIB:
                 		if hasattr(driver, "DEVICES"):
                         		for i in driver.DEVICES:
                                 		if i in self.drivers.keys():
-                                			Logging.warning("%s and %s support the same device." % (self.drivers[i], i))
+                                			Logging.warning("%s and %s support the same device." % (self.drivers[i], driver))
                                 		self.drivers[i] = driver
 				else:
 					Logging.warning("'DEVICES' attribute missing for %s" % driver)
