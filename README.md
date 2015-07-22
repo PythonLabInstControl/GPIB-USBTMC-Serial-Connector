@@ -21,4 +21,9 @@ cd GPIB-USBTMC-Connector
 Run install script
 ```
 ./install.sh
+
 ```
+
+## Usage
+Place all your source files in `Modules/Programs` and run them with `start.py` in `Modules`.
+Imports behave like in the `Modules` folder. 
