@@ -1,2 +1,3 @@
 *.pyc
 Modules/Programs/*
+!Modules/Programs/.keep
