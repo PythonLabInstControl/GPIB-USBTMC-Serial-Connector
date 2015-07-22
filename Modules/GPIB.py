@@ -22,12 +22,7 @@ class GPIB:
         		if i[0] != "_" and i != "GenericGPIBDriver":
                 		driver = getattr(Drivers, i)
                 		if hasattr(driver, "DEVICES"):
-					for k in driver.DEVICES:
-                                		if k in self.drivers.keys():
-                                			Logging.warning("%s and %s support the same device." % (self.drivers[k], driver))
-                                		self.drivers[k] = getattr(driver, i) 
-				else:
-					Logging.warning("'DEVICES' attribute missing for %s" % driver)
+					self.drivers.update(driver.DEVICES)
 		if self.debug: Logging.header("Drivers for following devices have been loaded: %s" % self.drivers)
 		self.started = True
 		self.reset_usb_controller()
@@ -81,6 +76,8 @@ class GPIB:
 			self.reset_debian8()
 		elif os == 'Debian GNU/Linux 7 \\n \\l\n\n':
 			self.reset_debian7()
+		else:
+			Logging.warning("OS does not support usb interface reset. Due to the instability issues with linux_gpib this could lead to problems.")
 
 
 	def reset_debian8(self):
@@ -235,7 +232,6 @@ class GPIBCommunicator:
 if __name__ == "__main__":
 	g = GPIB(debug=True)
 	if len(g.devices.keys()) > 0:
-		Logging.header(g.devices.keys())
 		port_corrent = False
 		while not port_corrent:
 			port = raw_input("Port: ")

@@ -2,7 +2,6 @@
 
 from GenericGPIBDriver import GenericGPIBDriver
 
-DEVICES = ["SR830"]
 
 class SR830(GenericGPIBDriver):
     def correct_phaseshift(self, phase):
@@ -1131,3 +1130,7 @@ class SR830(GenericGPIBDriver):
         """
         n = self.get('SPTS?')
         return int(n)
+
+
+
+DEVICES = {"SR830" : SR830}
