@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from GenericGPIBDriver import GenericGPIBDriver
+import time
+import numpy as np
 
 
 class SR830(GenericGPIBDriver):
@@ -157,21 +159,21 @@ class SR830(GenericGPIBDriver):
             else:
                 #R = self.getR();
                 #vValue = self.__SensitivityToVolt(iSensitivityLIA);#!!!
-                if self.self.debug: print str(vValue)
+                if self.debug: print str(vValue)
 
                 if R < 0.3 * vValue:
                     iSensitivityLIA = iSensitivityLIA - 1;
                     if iSensitivityLIA < 0:
                         iSensitivityLIA = 0;
                     # end;
-                    if self.self.debug: print("iSensitivityLIA: " + str(iSensitivityLIA))
+                    if self.debug: print("iSensitivityLIA: " + str(iSensitivityLIA))
                     self.SetSens(iSensitivityLIA);
                     bKorrekterBereich = 0;
                     time.sleep(3 * timeconstant + 0.2 * T)
                 else:
                     bKorrekterBereich = 1;
 
-        if self.self.debug: print str(vValue)
+        if self.debug: print str(vValue)
         return vValue
                 # end
             # end
