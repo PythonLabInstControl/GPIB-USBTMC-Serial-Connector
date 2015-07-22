@@ -46,4 +46,28 @@ class USBTMC:
 
 if __name__ == "__main__":
 	usb = USBTMC(debug=True)
-	print(usb.devices)
+	devices = usbtmc.list_devices()
+	device_list = {}
+	i = 1
+	for device in devices:
+		inst = usbtmc.Instrument(device.idVendor, device.idProduct)
+		device_list[i] = inst.ask("*IDN?")
+		i += 1
+	for i in device_list:
+		Logging.header("%s on %s" % (device_list[i], i))
+	Logging.success("Discovery finished successfully!")
+	if len(device_list.keys()) > 0:
+		port_corrent = False
+		while not port_corrent:
+			port = raw_input("Port: ")
+			if port.isdigit():
+				port = int(port)
+				if port in device_list.keys():
+					port_corrent = True
+		Logging.header("Starting command line (^C to quit)")
+		try:
+			inst = usbtmc.Instrument(devices[port - 1].idVendor, devices[port - 1].idProduct)
+			while 1:
+				print(inst.ask(raw_input("> ")))
+		except KeyboardInterrupt:
+			pass
