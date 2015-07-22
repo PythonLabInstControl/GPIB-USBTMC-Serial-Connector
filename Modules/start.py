@@ -14,7 +14,6 @@ if len(sys.argv) == 2:
 		import_path = os.path.dirname(sys.argv[1])
 		if import_path != "":
 			sys.path.append(os.path.abspath(import_path))
-			print(sys.path)
 			os.chdir(import_path)
 		importlib.import_module(os.path.basename(os.path.splitext(sys.argv[1])[0]))
 	else:
