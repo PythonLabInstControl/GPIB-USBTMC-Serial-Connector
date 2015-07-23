@@ -9,7 +9,7 @@ import os
 import subprocess
 import time
 import sys
-import Drivers
+import Drivers.GPIB
 
 
 class GPIB:
@@ -18,10 +18,10 @@ class GPIB:
 		self.devices = {}
 		self.drivers = {}
 		# We go through each driver and look at the attribute DEVICES which contains all devices the driver should be loaded for.
-		for i in dir(Drivers):
-        		if i[0] != "_" and i != "GenericGPIBDriver":
-                		driver = getattr(Drivers, i)
-                		if hasattr(driver, "DEVICES"):
+		for i in dir(Drivers.GPIB):
+			if i[0] != "_" and i != "GenericDriver":
+				driver = getattr(Drivers.GPIB, i)
+				if hasattr(driver, "DEVICES"):
 					self.drivers.update(driver.DEVICES)
 		if self.debug: Logging.header("Drivers for following devices have been loaded: %s" % self.drivers)
 		self.started = True
@@ -52,7 +52,7 @@ class GPIB:
 						self.devices[pad] = self.drivers[i](GPIBCommunicator(id, self.reset_interfaces))
 						driver_avaliable = True
 				if not driver_avaliable:
-					self.devices[pad] = Drivers.GenericGPIBDriver.GenericGPIBDriver(GPIBCommunicator(id, self.reset_interfaces))
+					self.devices[pad] = Drivers.GPIB.GenericDriver.GenericDriver(GPIBCommunicator(id, self.reset_interfaces))
 				discovered[id] = device_id
 			except gpib.GpibError:
 				pass
@@ -87,12 +87,12 @@ class GPIB:
 				os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci-pci/unbind' % i)
 				os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci-pci/bind' % i)
 
-        def reset_debian7(self):
-                ehci_content = os.listdir("/sys/bus/pci/drivers/ehci_hcd/")
-                for i in ehci_content:
-                        if i[0] == "0":
-                                os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci_hcd/unbind' % i)
-                                os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci_hcd/bind' % i)
+		def reset_debian7(self):
+				ehci_content = os.listdir("/sys/bus/pci/drivers/ehci_hcd/")
+				for i in ehci_content:
+						if i[0] == "0":
+								os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci_hcd/unbind' % i)
+								os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci_hcd/bind' % i)
 
 	def reset_usb(self):
 		if self.debug: Logging.info("Resetting connected usb interfaces")
