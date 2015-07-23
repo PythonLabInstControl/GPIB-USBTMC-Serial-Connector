@@ -1,6 +1,7 @@
 class GenericDriver:
-	def __init__(self, communicator, debug=False):
+	def __init__(self, communicator, device_id, debug=False):
 		self.communicator = communicator
+		self.device_id = device_id
 		self.debug = debug
 
 
