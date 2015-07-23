@@ -21,7 +21,7 @@ import sys
 import Drivers.USBTMC
 
 class USBTMC:
-	def __init__(self, debug=False, display_discovered_devices=True):
+	def __init__(self, debug=False):
 		self.devices = {}
 		self.drivers = {}
 		self.debug = debug
@@ -30,26 +30,26 @@ class USBTMC:
 					driver = getattr(Drivers.USBTMC, i)
 					if hasattr(driver, "DEVICES"):
 						self.drivers.update(driver.DEVICES)
-		if self.debug: Logging.header("Drivers for following devices have been loaded: %s" % self.drivers)
-		Logging.header("Starting discovery of scientific USBTMC devices that do stuff.")
+		if self.debug: Logging.info("Drivers for following devices have been loaded: %s" % self.drivers)
 		devices = usbtmc.list_devices()
 		progress_bar = ProgressBar(len(devices))
 		progress = 0
+		device_number = 0
 		for device in devices:
 			driver_avaliable = False
 			inst = usbtmc.Instrument(device.idVendor, device.idProduct)
 			device_id = inst.ask("*IDN?")
 			for i in self.drivers:
 				if i in device_id:
-					self.devices[device_id] = self.drivers[i](inst)
+					self.devices[device_number] = self.drivers[i](inst, device_id)
 					driver_avaliable = True
 			if not driver_avaliable:
-				self.devices[device_id] = Drivers.USBTMC.GenericDriver.GenericDriver(inst)
+				self.devices[device_number] = Drivers.USBTMC.GenericDriver.GenericDriver(inst, device_id)
 			progress += 1
+			device_number += 1
 			progress_bar.update(progress)
-		if display_discovered_devices:
-			for i in self.devices:
-				Logging.header("%s discovered!" % i)
+		for i in self.devices:
+			Logging.header("%s discovered on virtual port %s" % (self.devices[i].device_id, i))
 		Logging.success("Discovery finished successfully!")
 
 	def __del__(self):
@@ -62,24 +62,18 @@ class USBTMC:
 
 
 if __name__ == "__main__":
-	usb = USBTMC(debug=True, display_discovered_devices=False)
-	port_table = {}
-	virtual_port = 1
-	for i in usb.devices:
-		port_table[virtual_port] = i
-		Logging.header("%s discovered on %s" % (i, str(virtual_port)))
-		virtual_port += 1
+	usb = USBTMC(debug=True)
 	if len(usb.devices.keys()) > 0:
 		port_corrent = False
 		while not port_corrent:
 			port = raw_input("Port: ")
 			if port.isdigit():
 				port = int(port)
-				if port in port_table.keys():
+				if port in usb.devices.keys():
 					port_corrent = True
 		Logging.header("Starting command line (^C to quit)")
 		try:
-			inst = usb.devices[port_table[port]]
+			inst = usb.devices[port]
 			while 1:
 				print(inst.get(raw_input("> ")))
 		except KeyboardInterrupt:

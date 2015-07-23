@@ -23,7 +23,7 @@ class GPIB:
 				driver = getattr(Drivers.GPIB, i)
 				if hasattr(driver, "DEVICES"):
 					self.drivers.update(driver.DEVICES)
-		if self.debug: Logging.header("Drivers for following devices have been loaded: %s" % self.drivers)
+		if self.debug: Logging.info("Drivers for following devices have been loaded: %s" % self.drivers)
 		self.started = True
 		self.reset_usb_controller()
 		# Interface ids are used to determine which usb connections need to be reset
@@ -37,7 +37,6 @@ class GPIB:
 			self.started = False
 			exit(1)
 		self.reset_interfaces()
-		Logging.header("Starting discovery of scientific devices that do stuff")
 		progress_bar = ProgressBar(30)
 		discovered = {}
 		for pad in range(0, 31):
@@ -49,10 +48,10 @@ class GPIB:
 				device_id = gpib.read(id, 1024).rstrip()
 				for i in self.drivers:
 					if i in device_id:
-						self.devices[pad] = self.drivers[i](GPIBCommunicator(id, self.reset_interfaces))
+						self.devices[pad] = self.drivers[i](GPIBCommunicator(id, self.reset_interfaces), device_id)
 						driver_avaliable = True
 				if not driver_avaliable:
-					self.devices[pad] = Drivers.GPIB.GenericDriver.GenericDriver(GPIBCommunicator(id, self.reset_interfaces))
+					self.devices[pad] = Drivers.GPIB.GenericDriver.GenericDriver(GPIBCommunicator(id, self.reset_interfaces), device_id)
 				discovered[id] = device_id
 			except gpib.GpibError:
 				pass
@@ -76,6 +75,8 @@ class GPIB:
 			self.reset_debian8()
 		elif os == 'Debian GNU/Linux 7 \\n \\l\n\n':
 			self.reset_debian7()
+		elif os == "Raspbian GNU/Linux 7 \\n \\l\n\n":
+			pass
 		else:
 			Logging.warning("OS does not support usb interface reset. Due to the instability issues with linux_gpib this could lead to problems.")
 
