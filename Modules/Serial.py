@@ -1,8 +1,9 @@
 import TermOut.Logging as Logging
 try:
 	import serial
-except ImportException:
+except ImportError:
 	Logging.error("pyserial not installed")
+	exit(1)
 from TermOut.ProgressBar import ProgressBar
 import os
 import time
@@ -49,11 +50,6 @@ class Serial:
 
 	def __del__(self):
 		pass
-	"""
-	def close_usbtmc_devices(self):
-		for device in self.devices:
-			self.devices[device].communicator.reset()
-	"""
 
 
 if __name__ == "__main__":
