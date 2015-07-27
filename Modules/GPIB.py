@@ -72,21 +72,27 @@ class GPIB:
 		if self.debug: Logging.warning("Resetting usb controller")
 		os = open("/etc/issue").read()
 		if os == 'Debian GNU/Linux 8 \\n \\l\n\n':
-			self.reset_debian()
+			self.reset_debian8()
 		elif os == 'Debian GNU/Linux 7 \\n \\l\n\n':
-			self.reset_debian()
+			self.reset_debian7()
 		elif os == "Raspbian GNU/Linux 7 \\n \\l\n\n":
 			pass
 		else:
 			Logging.warning("OS does not support usb interface reset. Due to the instability issues with linux_gpib this could lead to problems.")
 
 
-	def reset_debian(self):
+	def reset_debian8(self):
 		ehci_content = os.listdir("/sys/bus/pci/drivers/ehci-pci/")
 		for i in ehci_content:
 			if i[0] == "0":
 				os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci-pci/unbind' % i)
 				os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci-pci/bind' % i)
+        def reset_debian7(self):
+                ehci_content = os.listdir("/sys/bus/pci/drivers/ehci_hcd/")
+                for i in ehci_content:
+                        if i[0] == "0":
+                                os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci_hcd/unbind' % i)
+                                os.system('echo -n %s | sudo tee /sys/bus/pci/drivers/ehci_hcd/bind' % i)
 
 	def reset_usb(self):
 		if self.debug: Logging.info("Resetting connected usb interfaces")
@@ -97,8 +103,6 @@ class GPIB:
 						subprocess.check_output(["sudo", "usbreset", "/dev/bus/usb/%s/%s" % (i[4:7], i[15:18])])
 					except subprocess.CalledProcessError:
 						self.reset_usb_controller()
-
-
 
 
 	# If the interface get's stuck this function is used to reset it
