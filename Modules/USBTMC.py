@@ -1,8 +1,5 @@
 """
-Created on 18.11.2014
-Veronika Schrenk
-
-Modified by: Nico Leidenfrost, Philip Trauner
+Created by: Nico Leidenfrost, Philip Trauner
 
 Required software:
 - USBTMC: https://github.com/python-ivi/python-usbtmc
@@ -14,6 +11,7 @@ try:
 	import usbtmc
 except ImportException:
 	Logging.error("usbtmc not installed")
+	exit(1)
 from TermOut.ProgressBar import ProgressBar
 import time
 import subprocess
