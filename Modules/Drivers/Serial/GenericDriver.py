@@ -9,7 +9,7 @@ class GenericDriver:
 
 	def get(self, cmd):
 		self.write(cmd)
-		return self.communicator.read(1024)
+		return self.communicator.readline()
 
 
 	def set(self, cmd, param):
