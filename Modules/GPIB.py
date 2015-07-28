@@ -13,8 +13,9 @@ import Drivers.GPIB
 
 
 class GPIB:
-	def __init__(self, sad=0, timeout=13, send_eoi=1, eos_mode=0, debug=False, interfaces=[]):
+	def __init__(self, sad=0, timeout=13, send_eoi=1, eos_mode=0, debug=False, reset=False, interfaces=[]):
 		self.debug = debug
+		self.reset = reset
 		self.devices = {}
 		self.drivers = {}
 		# We go through each driver and look at the attribute DEVICES which contains all devices the driver should be loaded for.
@@ -25,7 +26,8 @@ class GPIB:
 					self.drivers.update(driver.DEVICES)
 		if self.debug: Logging.info("Drivers for following devices have been loaded: %s" % self.drivers)
 		self.started = True
-		self.reset_usb_controller()
+		if self.reset:
+			self.reset_usb_controller()
 		# Interface ids are used to determine which usb connections need to be reset
 		# Example:
 		"""
