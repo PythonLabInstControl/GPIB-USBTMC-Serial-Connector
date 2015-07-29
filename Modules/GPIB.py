@@ -74,7 +74,7 @@ class GPIB:
 		if self.debug: Logging.warning("Resetting usb controller")
 		operating_system = open("/etc/issue").read()
 		if operating_system == 'Debian GNU/Linux 7 \\n \\l\n\n':
-			subprocess.check_call(["sudo", "service", "udev", "restart"])
+			subprocess.check_output(["sudo", "service", "udev", "restart"])
 		elif operating_system == "Raspbian GNU/Linux 7 \\n \\l\n\n":
 			pass
 		else:
