@@ -13,6 +13,7 @@ except ImportException:
 	Logging.error("usbtmc not installed")
 	exit(1)
 from TermOut.ProgressBar import ProgressBar
+import os
 import time
 import subprocess
 import sys
@@ -20,6 +21,11 @@ import Drivers.USBTMC
 
 class USBTMC:
 	def __init__(self, debug=False):
+		if os.geteuid() != 0:
+			Logging.error("You need to have root privileges to run this script.")
+			self.started = False
+			exit(1)
+		self.started = True
 		self.devices = {}
 		self.drivers = {}
 		self.debug = debug
@@ -54,8 +60,9 @@ class USBTMC:
 		self.close_usbtmc_devices()
 
 	def close_usbtmc_devices(self):
-		for device in self.devices:
-			self.devices[device].communicator.reset()
+		if self.started:
+			for device in self.devices:
+				self.devices[device].communicator.reset()
 
 
 
