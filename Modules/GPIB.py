@@ -21,6 +21,7 @@ class GPIB:
 		self.debug = debug
 		self.reset = reset
 		self.devices = {}
+		self.started = True
 		self.drivers = {}
 		# We go through each driver and look at the attribute DEVICES which contains all devices the driver should be loaded for.
 		for i in dir(Drivers.GPIB):
@@ -29,7 +30,6 @@ class GPIB:
 				if hasattr(driver, "DEVICES"):
 					self.drivers.update(driver.DEVICES)
 		if self.debug: Logging.info("Drivers for following devices have been loaded: %s" % self.drivers)
-		self.started = True
 		self.reset_usb_controller()
 		# Interface ids are used to determine which usb connections need to be reset
 		# Example:
@@ -64,7 +64,7 @@ class GPIB:
 
 
 	def __del__(self):
-		if len(self.devices) != 0:
+		if self.started:
 			for i in self.devices:
 				gpib.close(i.communicator.id)
 			self.reset_usb()
@@ -73,9 +73,8 @@ class GPIB:
 	def reset_usb_controller(self):
 		if self.debug: Logging.warning("Resetting usb controller")
 		operating_system = open("/etc/issue").read()
-		if operating_system == 'Debian GNU/Linux 7 \\n \\l\n\n':
+		if operating_system == 'Debian GNU/Linux 8 \\n \\l\n\n':
 			self.reset_debian8()
-			#os.system("sudo service udev restart")
 		elif operating_system == 'Debian GNU/Linux 7 \\n \\l\n\n':
 			#self.reset_debian7()
 			os.system("sudo service udev restart")
