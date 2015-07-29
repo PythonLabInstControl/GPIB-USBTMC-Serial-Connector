@@ -14,6 +14,10 @@ import Drivers.GPIB
 
 class GPIB:
 	def __init__(self, sad=0, timeout=13, send_eoi=1, eos_mode=0, debug=False, reset=False, interfaces=[]):
+		if os.geteuid() != 0:
+			Logging.error("You need to have root privileges to run this script.")
+			self.started = False
+			exit(1)
 		self.debug = debug
 		self.reset = reset
 		self.devices = {}
@@ -26,18 +30,13 @@ class GPIB:
 					self.drivers.update(driver.DEVICES)
 		if self.debug: Logging.info("Drivers for following devices have been loaded: %s" % self.drivers)
 		self.started = True
-		if self.reset:
-			self.reset_usb_controller()
+		self.reset_usb_controller()
 		# Interface ids are used to determine which usb connections need to be reset
 		# Example:
 		"""
 		Bus 001 Device 006: ID 3923:709b National Instruments Corp. GPIB-USB-HS
 		"""
 		self.interfaces = ["3923:709b", "0957:0518"] + interfaces
-		if os.geteuid() != 0:
-			Logging.error("You need to have root privileges to run this script.")
-			self.started = False
-			exit(1)
 		self.reset_interfaces()
 		progress_bar = ProgressBar(30)
 		discovered = {}
@@ -65,19 +64,21 @@ class GPIB:
 
 
 	def __del__(self):
-		for i in self.devices:
-			gpib.close(i.communicator.id)
-		self.reset_usb()
+		if len(self.devices) != 0:
+			for i in self.devices:
+				gpib.close(i.communicator.id)
+			self.reset_usb()
 
 
 	def reset_usb_controller(self):
 		if self.debug: Logging.warning("Resetting usb controller")
-		os = open("/etc/issue").read()
-		if os == 'Debian GNU/Linux 8 \\n \\l\n\n':
-			self.reset_debian8()
-		elif os == 'Debian GNU/Linux 7 \\n \\l\n\n':
+		operating_system = open("/etc/issue").read()
+		if operating_system == 'Debian GNU/Linux 8 \\n \\l\n\n':
+			#self.reset_debian8()
+			os.system("sudo service udev restart")
+		elif operating_system == 'Debian GNU/Linux 7 \\n \\l\n\n':
 			self.reset_debian7()
-		elif os == "Raspbian GNU/Linux 7 \\n \\l\n\n":
+		elif operating_system == "Raspbian GNU/Linux 7 \\n \\l\n\n":
 			pass
 		else:
 			Logging.warning("OS does not support usb interface reset. Due to the instability issues with linux_gpib this could lead to problems.")
