@@ -73,11 +73,12 @@ class GPIB:
 	def reset_usb_controller(self):
 		if self.debug: Logging.warning("Resetting usb controller")
 		operating_system = open("/etc/issue").read()
-		if operating_system == 'Debian GNU/Linux 8 \\n \\l\n\n':
-			#self.reset_debian8()
-			os.system("sudo service udev restart")
+		if operating_system == 'Debian GNU/Linux 7 \\n \\l\n\n':
+			self.reset_debian8()
+			#os.system("sudo service udev restart")
 		elif operating_system == 'Debian GNU/Linux 7 \\n \\l\n\n':
-			self.reset_debian7()
+			#self.reset_debian7()
+			os.system("sudo service udev restart")
 		elif operating_system == "Raspbian GNU/Linux 7 \\n \\l\n\n":
 			pass
 		else:
