@@ -12,3 +12,6 @@ class GenericDriver:
 
 	def set(self, cmd, param):
 		self.communicator.write(cmd + " " + str(param))
+	
+	def write(self, cmd):
+		self.communicator.write(cmd)
