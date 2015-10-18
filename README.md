@@ -14,7 +14,7 @@ sudo apt-get install git
 ```
 Clone this repository
 ```
-git clone https://github.com/PhilipTrauner/GPIB-USBTMC-Connector.git
+git clone https://github.com/PythonLabInstControl/GPIB-USBTMC-Serial-Connector
 ```
 Go into repo folder
 ```
