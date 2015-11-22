@@ -4,9 +4,9 @@
 **[Only supported Raspberry Pi OS](https://github.com/debian-pi/raspbian-ua-netinst)**
 
 ## Installation
-Install sudo
+Install sudo (as root)
 ```
-sudo apt-get install sudo
+apt-get install sudo
 ```
 Install git
 ```
