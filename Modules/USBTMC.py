@@ -41,7 +41,7 @@ class USBTMC:
 		device_number = 0
 		for device in devices:
 			driver_avaliable = False
-			inst = usbtmc.Instrument(device.idVendor, device.idProduct)
+			inst = usbtmc.Instrument(device.idVendor, device.idProduct, device.serial_number)
 			device_id = inst.ask("*IDN?")
 			for i in self.drivers:
 				if i in device_id:
