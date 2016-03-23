@@ -2,6 +2,7 @@
 **Recommended OS: Debian 7**
 
 **[Only supported Raspberry Pi OS](https://github.com/debian-pi/raspbian-ua-netinst)**
+**A update of pyserial to version 3.X is recommended
 
 ## Installation
 Install sudo (as root)
